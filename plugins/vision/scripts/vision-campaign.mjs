@@ -106,12 +106,58 @@ async function removeFileWithRetry(filePath) {
   }
 }
 
-async function acquireRunnerLease(campaign) {
+async function acquireRunnerAcquisitionGuard(campaign) {
+  const guardPath = path.join(campaign.root, ".runner.acquire.lock");
+  const token = randomUUID();
+  await fs.mkdir(campaign.root, { recursive: true });
+  for (let acquisition = 0; acquisition < 200; acquisition += 1) {
+    let handle;
+    try {
+      handle = await fs.open(guardPath, "wx", 0o600);
+    } catch (error) {
+      const contention = error.code === "EEXIST"
+        || (process.platform === "win32" && ["EPERM", "EACCES"].includes(error.code));
+      if (!contention) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      continue;
+    }
+    const metadata = {
+      schema_version: 1,
+      token,
+      pid: process.pid,
+      campaign_id: campaign.manifest.campaign_id,
+      acquired_at: new Date().toISOString(),
+    };
+    await handle.writeFile(`${JSON.stringify(metadata)}\n`, "utf8");
+    await handle.sync();
+    return {
+      async release() {
+        await handle.close();
+        const current = JSON.parse(await fs.readFile(guardPath, "utf8"));
+        if (current.token !== token) {
+          throw new Error("campaign runner acquisition guard token changed before release");
+        }
+        await removeFileWithRetry(guardPath);
+      },
+    };
+  }
+  let metadata = null;
+  try {
+    metadata = JSON.parse(await fs.readFile(guardPath, "utf8"));
+  } catch {
+    throw new Error("campaign runner acquisition guard is not safely reclaimable; inspect .runner.acquire.lock");
+  }
+  if (!processIsAlive(Number(metadata.pid))) {
+    throw new Error(`campaign runner acquisition guard is orphaned (pid ${metadata.pid}); inspect and remove .runner.acquire.lock`);
+  }
+  throw new Error(`campaign runner is already active (lease acquisition pid ${metadata.pid})`);
+}
+
+async function acquireRunnerLeaseUnlocked(campaign) {
   const lockPath = path.join(campaign.root, ".runner.lock");
   const token = randomUUID();
   const staleMs = Number(campaign.manifest.runner_lock_stale_ms || 60_000);
   if (!Number.isSafeInteger(staleMs) || staleMs < 1_000) throw new Error("runner_lock_stale_ms must be an integer of at least 1000");
-  await fs.mkdir(campaign.root, { recursive: true });
   for (let acquisition = 0; acquisition < 3; acquisition += 1) {
     let handle;
     try {
@@ -165,6 +211,15 @@ async function acquireRunnerLease(campaign) {
     };
   }
   throw new Error("campaign runner lease could not be acquired");
+}
+
+async function acquireRunnerLease(campaign) {
+  const acquisitionGuard = await acquireRunnerAcquisitionGuard(campaign);
+  try {
+    return await acquireRunnerLeaseUnlocked(campaign);
+  } finally {
+    await acquisitionGuard.release();
+  }
 }
 
 function resolveManifestPaths(manifest, manifestPath) {

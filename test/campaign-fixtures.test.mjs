@@ -12,7 +12,9 @@ const sourceManifest = path.join(repositoryRoot, "evaluation", "campaign", "mani
 
 function runNode(args) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, args, { cwd: repositoryRoot, windowsHide: true });
+    const env = { ...process.env };
+    delete env.NODE_TEST_CONTEXT;
+    const child = spawn(process.execPath, args, { cwd: repositoryRoot, env, windowsHide: true });
     let stdout = "";
     let stderr = "";
     child.stdout.on("data", (chunk) => { stdout += chunk.toString(); });

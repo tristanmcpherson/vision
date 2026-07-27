@@ -28,14 +28,14 @@ jobs:
           node-version: 24.14.0
           package-manager-cache: false
       - run: npm ci
-      - run: npm test
-      - run: npm run portability
       - name: Install Chromium and Linux dependencies
         if: runner.os == 'Linux'
         run: npx playwright install --with-deps chromium
       - name: Install Chromium
         if: runner.os != 'Linux'
         run: npx playwright install chromium
+      - run: npm test
+      - run: npm run portability
       - run: npm run proof
       - run: npm run evaluate:pilot:current
       - uses: actions/upload-artifact@v7
