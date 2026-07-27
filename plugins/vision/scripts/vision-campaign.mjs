@@ -1276,8 +1276,17 @@ export async function main(argv = process.argv.slice(2)) {
   return result;
 }
 
-const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : null;
-if (invokedPath === fileURLToPath(import.meta.url)) {
+async function canonicalExecutablePath(value) {
+  try {
+    return await fs.realpath(value);
+  } catch {
+    return path.resolve(value);
+  }
+}
+
+const invokedPath = process.argv[1] ? await canonicalExecutablePath(process.argv[1]) : null;
+const modulePath = await canonicalExecutablePath(fileURLToPath(import.meta.url));
+if (invokedPath === modulePath) {
   main().catch((error) => {
     console.error(`ERROR: ${redactSensitiveText(error.stack || error.message)}`);
     process.exitCode = 1;
