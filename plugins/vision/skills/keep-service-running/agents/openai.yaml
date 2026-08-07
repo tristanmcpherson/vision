@@ -1,0 +1,4 @@
+interface:
+  display_name: "Keep Service Running"
+  short_description: "Keep task-scoped services alive"
+  default_prompt: "Use $keep-service-running to keep this task-scoped service alive after the agent exits and verify it independently."

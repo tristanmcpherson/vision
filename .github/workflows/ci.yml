@@ -9,12 +9,10 @@ permissions:
   contents: read
 
 jobs:
-  portability-and-proof:
+  product:
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: .playwright-browsers
     strategy:
       fail-fast: false
       matrix:
@@ -28,24 +26,4 @@ jobs:
           node-version: 24.14.0
           package-manager-cache: false
       - run: npm ci
-      - name: Install Chromium and Linux dependencies
-        if: runner.os == 'Linux'
-        run: npx playwright install --with-deps chromium
-      - name: Install Chromium
-        if: runner.os != 'Linux'
-        run: npx playwright install chromium
       - run: npm test
-      - run: npm run portability
-      - run: npm run proof
-      - run: npm run evaluate:pilot:current
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: mechanical-evidence-${{ matrix.os }}
-          # Earlier test failures can prevent proof generation. Preserve the
-          # primary failure instead of replacing it with an upload error.
-          if-no-files-found: warn
-          path: |
-            proof/mechanical-report.json
-            proof/last-proof.json
-            evaluation/results/pilot-latest.json

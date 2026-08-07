@@ -1,33 +1,27 @@
 {
   "name": "vision",
-  "version": "0.4.0+codex.20260723000000",
-  "description": "Vision researches, goal-sets, resumes, orchestrates, verifies, and delivers engineering work with bounded roles and acceptance-linked evidence.",
+  "version": "0.6.0",
+  "description": "Vision packages a lightweight engineering workflow and focused skills for repository guidance and persistent services.",
   "author": {
     "name": "Tristan"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Vision",
-    "shortDescription": "Research-first goals, deterministic resume, and evidence.",
-    "longDescription": "Vision is a portable Codex workflow for authority-neutral work-environment profiles, calibrated read-only discovery, contract-bound persistent goals, deterministic lifecycle recovery, bounded project-scoped roles, Beads-backed execution, direct risk gates, current-attempt advisory review, real-service checks when relevant, protected verification, and distinct delivery-controller bindings.",
+    "shortDescription": "Useful engineering guidance without process overhead.",
+    "longDescription": "Vision combines a lightweight outcome-driven engineering workflow with focused skills for bootstrapping repository instructions and keeping requested services alive through independent verification. It avoids contracts, lifecycle state, checksums, receipts, and other proof-of-process requirements.",
     "developerName": "Tristan",
     "category": "Productivity",
     "capabilities": [
-      "Calibrated task planning",
-      "Portable work-environment profiles",
-      "Read-only scout research",
-      "Contract-bound persistent goals",
-      "Deterministic resume and continuation guards",
-      "Bounded autonomous outcome loops",
-      "Project-scoped builder and reviewer roles",
-      "Task-owned worktree binding",
-      "Beads integration",
-      "Current-attempt advisory review",
-      "Protected verification and delivery bindings",
-      "Read-only harness and skill diagnostics",
-      "Risk-selected diagnostics"
+      "Outcome-driven implementation",
+      "Repository-guided planning",
+      "Weakest-sufficient solution selection",
+      "Focused behavioral verification",
+      "Risk-aware broader checks",
+      "Honest technical handoff",
+      "Repository-specific AGENTS.md bootstrap",
+      "Persistent service verification"
     ],
-    "defaultPrompt": "Take the user's stated engineering outcome end to end with Vision. Research and create or reconcile the canonical goal automatically, then implement, verify, diagnose, and reverify until locally-verified by default or the user's explicit target or a concrete blocker. Do not ask the user to repeat Vision's internal workflow."
-  },
-  "mcpServers": "./.mcp.json"
+    "defaultPrompt": "Use Vision to take this engineering outcome end to end."
+  }
 }
