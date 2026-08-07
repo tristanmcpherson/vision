@@ -1,3 +1,0 @@
-.agentic/evidence/
-test-results/
-playwright-report/

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bootstrap AGENTS.md"
+  short_description: "Create concise repository-specific agent guidance"
+  default_prompt: "Use $bootstrap-agents-md to create or improve this repository's AGENTS.md from its actual commands and conventions."

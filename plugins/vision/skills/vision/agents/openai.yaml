@@ -1,6 +1,7 @@
 interface:
   display_name: "Vision"
-  short_description: "Drive engineering work end to end with evidence"
-  default_prompt: "Take the user's stated engineering outcome end to end with Vision. Research and create or reconcile the canonical goal automatically, then implement, verify, diagnose, and reverify until locally-verified by default or the user's explicit target or a concrete blocker. The user does not need to repeat Vision's internal workflow."
+  short_description: "Build the outcome and check that it works"
+  default_prompt: "Use $vision to take this outcome end to end."
+
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false
